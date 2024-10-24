@@ -1,0 +1,58 @@
+# Ignore simulation and compilation output files
+*.log
+*.out
+*.vcd
+*.wlf
+*.wdb
+*.vstf
+*.vst
+*.dat
+*.jou
+*.sim
+*.nfs*
+
+# Ignore temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Ignore synthesis tool specific files
+# For example, Xilinx Vivado
+*.bit
+*.bin
+*.str
+*.tcl
+*.xml
+*.ngc
+*.ncf
+*.dcp
+*.xdc
+
+# Quartus Prime (Intel)
+db/
+simulation/
+output_files/
+incremental_db/
+*.sof
+*.qpf
+*.qsf
+
+# Ignore testbench results
+*.pb
+*.cfg
+
+# Ignore IDE-specific files
+# Xilinx Vivado
+.xpr
+.ip_user_files/
+.sim/
+.cache/
+.hw/
+
+# Quartus Prime (Intel)
+.db/
+.db_info/
+
+# Ignore VSCode files if you use it
+.vscode/
