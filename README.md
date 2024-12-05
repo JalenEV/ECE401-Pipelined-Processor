@@ -30,7 +30,7 @@ https://www.gem5.org/documentation/general_docs/building
 
 ## Optimization Task Lists
 
-- [] # Branch Prediction
-- [] # Add L2 Cache
-- [] # Pipeline Bypass/Forwarding
-- [] # Memory Tuning
+- [ ] # Branch Prediction
+- [ ] # Add L2 Cache
+- [ ] # Pipeline Bypass/Forwarding
+- [ ] # Memory Tuning
