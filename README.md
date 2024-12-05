@@ -25,3 +25,10 @@ https://www.gem5.org/documentation/general_docs/building
 # Navigate to the project directory
 
 # Follow the setup instructions in the project
+
+## Optimization Task Lists
+
+- [] # Branch Prediction
+- [] # Add L2 Cache
+- [] # Pipeline Bypass/Forwarding
+- [] # Memory Tuning
