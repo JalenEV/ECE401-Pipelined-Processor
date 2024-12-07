@@ -33,10 +33,23 @@ class L1DCache(Cache):
     tgts_per_mshr = 16
     writeback_clean = True    # Write-back policy to reduce memory writes
 
+class L2Cache(Cache):
+    assoc = 8                 # Higher associativity for shared access
+    tag_latency = 10          # Larger latency compared to L1 caches
+    data_latency = 10         
+    response_latency = 10
+    mshrs = 8                 # Increased number of miss status holding registers
+    size = '256kB'            # Larger size than L1 caches
+    tgts_per_mshr = 16
+
 # Set up the CPU
 system.cpu = RiscvTimingSimpleCPU()
 system.cpu.icache = L1ICache()  # Assign the L1 Instruction cache
 system.cpu.dcache = L1DCache()  # Assign the L1 Data cache
+
+# Set up the L2 cache and its bus
+system.l2cache = L2Cache()
+system.l2bus   = SystemXBar()
 
 # Create a memory bus
 system.membus = SystemXBar()
@@ -45,9 +58,13 @@ system.membus = SystemXBar()
 system.cpu.icache_port = system.cpu.icache.cpu_side
 system.cpu.dcache_port = system.cpu.dcache.cpu_side
 
-# Connect caches to the memory bus
-system.cpu.icache.mem_side = system.membus.cpu_side_ports
-system.cpu.dcache.mem_side = system.membus.cpu_side_ports
+# Connect the L1 caches to the L2 cache
+system.cpu.icache.mem_side = system.l2bus.cpu_side_ports
+system.cpu.dcache.mem_side = system.l2bus.cpu_side_ports
+
+# Connect the L2 cache to the memory bus
+system.l2cache.cpu_side = system.l2bus.mem_side_ports
+system.l2cache.mem_side = system.membus.cpu_side_ports
 
 # Create the interrupt controller for the CPU
 system.cpu.createInterruptController()
