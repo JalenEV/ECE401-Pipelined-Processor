@@ -25,13 +25,13 @@ class L1ICache(Cache):
     tgts_per_mshr = 20
 
 class L1DCache(Cache):
-    assoc = 2
-    tag_latency = 1
-    data_latency = 1
+    assoc = 4
+    tag_latency = 2
+    data_latency = 2
     response_latency = 1
     mshrs = 4
     size = '16kB'
-    tgts_per_mshr = 20
+    tgts_per_mshr = 16
 
 # Set up the CPU
 system.cpu = RiscvTimingSimpleCPU()
