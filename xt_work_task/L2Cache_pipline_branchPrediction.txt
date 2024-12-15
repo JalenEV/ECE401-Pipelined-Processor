@@ -1,0 +1,134 @@
+import m5
+from m5.objects import *
+import os
+
+# Create the system object
+system = System()
+
+# Set up the clock domain
+system.clk_domain = SrcClockDomain()
+system.clk_domain.clock = "1GHz"
+system.clk_domain.voltage_domain = VoltageDomain()
+
+# Set the memory mode and address range
+system.mem_mode = "timing"
+system.mem_ranges = [AddrRange("8192MB")]
+
+# Define L1 Instruction and Data Caches
+class L1ICache(Cache):
+    assoc = 2
+    tag_latency = 1
+    data_latency = 1
+    response_latency = 1
+    mshrs = 4
+    size = '16kB'
+    tgts_per_mshr = 20
+
+class L1DCache(Cache):
+    assoc = 2
+    tag_latency = 1
+    data_latency = 1
+    response_latency = 1
+    mshrs = 4
+    size = '16kB'
+    tgts_per_mshr = 20
+
+# Define L2 Cache
+class L2Cache(Cache):
+    assoc = 8
+    tag_latency = 10
+    data_latency = 10
+    response_latency = 10
+    mshrs = 16
+    tgts_per_mshr = 20
+    size = '256kB'
+
+# Set up the CPU
+system.cpu = RiscvTimingSimpleCPU()
+system.cpu.icache = L1ICache()  # Assign the L1 Instruction cache
+system.cpu.dcache = L1DCache()  # Assign the L1 Data cache
+
+# Create the memory bus
+system.membus = SystemXBar()
+
+# Add a crossbar for L2 cache
+system.l2xbar = SystemXBar()
+
+# Add L2 Cache
+system.l2cache = L2Cache()
+
+# Connect L1 caches to L2 crossbar
+system.cpu.icache.mem_side = system.l2xbar.cpu_side_ports
+system.cpu.dcache.mem_side = system.l2xbar.cpu_side_ports
+
+# Connect L2 crossbar to L2 cache
+system.l2xbar.mem_side_ports = system.l2cache.cpu_side
+
+# Connect L2 cache to the memory bus
+system.l2cache.mem_side = system.membus.cpu_side_ports
+
+# Connect the CPU's instruction and data ports to the memory bus
+system.cpu.icache_port = system.cpu.icache.cpu_side
+system.cpu.dcache_port = system.cpu.dcache.cpu_side
+
+# Create the interrupt controller for the CPU
+system.cpu.createInterruptController()
+
+# Set up the memory controller and DRAM
+system.mem_ctrl = MemCtrl()
+system.mem_ctrl.dram = DDR3_1600_8x8()
+system.mem_ctrl.dram.range = system.mem_ranges[0]
+system.mem_ctrl.port = system.membus.mem_side_ports
+
+# Connect the system port to the memory bus
+system.system_port = system.membus.cpu_side_ports
+
+# Set up the binary to run
+thispath = os.path.dirname(os.path.realpath(__file__))
+binary = os.path.join(
+    thispath,
+    "../../../",
+    "tests/test-progs/hello/bin/riscv/linux/hello",
+)
+
+# Set up the workload
+system.workload = SEWorkload.init_compatible(binary)
+
+# Create a process to represent the workload
+process = Process()
+process.cmd = [binary]
+system.cpu.workload = process
+system.cpu.createThreads()
+
+# Define bypass/forwarding and branch prediction logic
+def handle_data_hazard(src_reg, dest_reg):
+    """Simulate handling a data hazard."""
+    print(f"Data hazard detected: Forwarding from {src_reg} to {dest_reg}")
+    return True
+
+def predict_branch(pc):
+    """Simulate branch prediction."""
+    print(f"Predicting branch outcome for PC: {pc}")
+    # Simple static prediction (e.g., always taken)
+    return True
+
+# Simulate a test scenario
+src_reg = "r1"
+dest_reg = "r1"
+if handle_data_hazard(src_reg, dest_reg):
+    print("Bypassing resolved the hazard")
+
+pc = 0x1000
+if predict_branch(pc):
+    print(f"Branch predicted as taken for PC: {pc}")
+
+# Set up the root and instantiate the system
+root = Root(full_system=False, system=system)
+m5.instantiate()
+
+print("Beginning simulation!")
+exit_event = m5.simulate()
+print("Exiting @ tick %i because %s" % (m5.curTick(), exit_event.getCause()))
+
+print("Simulation complete. Dumping stats...")
+m5.stats.dump()
