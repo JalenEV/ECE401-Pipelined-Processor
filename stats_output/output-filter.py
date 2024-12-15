@@ -7,7 +7,10 @@ def extract_metrics(file_path):
         "l2_hit_rate": None,
         "dram_accesses": None,
         "execution_ticks": None,
-        "avg_memory_latency": None
+        "avg_memory_latency": None,
+        "branch_lookups": None,
+        "branch_mispredictions": None,
+        "branch_accuracy": None
     }
 
     with open(file_path, 'r') as file:
@@ -37,6 +40,20 @@ def extract_metrics(file_path):
         if memory_latency:
             metrics["avg_memory_latency"] = int(memory_latency.group(1))
 
+        # Branch prediction metrics
+        branch_lookups = re.search(r'system\.cpu\.branchPred\.lookups\s+(\d+)', content)
+        if branch_lookups:
+            metrics["branch_lookups"] = int(branch_lookups.group(1))
+
+        branch_mispredictions = re.search(r'system\.cpu\.branchPred\.mispredictions\s+(\d+)', content)
+        if branch_mispredictions:
+            metrics["branch_mispredictions"] = int(branch_mispredictions.group(1))
+
+        if metrics["branch_lookups"] and metrics["branch_mispredictions"]:
+            metrics["branch_accuracy"] = (
+                1 - (metrics["branch_mispredictions"] / metrics["branch_lookups"])
+            ) * 100
+
     return metrics
 
 if __name__ == "__main__":
@@ -53,3 +70,6 @@ if __name__ == "__main__":
     print(f"DRAM Accesses: {metrics['dram_accesses']}") if metrics['dram_accesses'] else print("DRAM Accesses: Data not found")
     print(f"Execution Ticks: {metrics['execution_ticks']}") if metrics['execution_ticks'] else print("Execution Ticks: Data not found")
     print(f"Average Memory Latency: {metrics['avg_memory_latency']} ticks") if metrics['avg_memory_latency'] else print("Average Memory Latency: Data not found")
+    print(f"Branch Prediction Lookups: {metrics['branch_lookups']}") if metrics['branch_lookups'] else print("Branch Prediction Lookups: Data not found")
+    print(f"Branch Mispredictions: {metrics['branch_mispredictions']}") if metrics['branch_mispredictions'] else print("Branch Mispredictions: Data not found")
+    print(f"Branch Prediction Accuracy: {metrics['branch_accuracy']:.2f}%") if metrics['branch_accuracy'] else print("Branch Prediction Accuracy: Data not found")

@@ -7,7 +7,7 @@ system = System()
 
 # Set up the clock domain
 system.clk_domain = SrcClockDomain()
-system.clk_domain.clock = "2GHz" # change 1GHz to 2GHz
+system.clk_domain.clock = "1GHz"
 system.clk_domain.voltage_domain = VoltageDomain()
 
 # Set the memory mode and address range
@@ -15,54 +15,53 @@ system.mem_mode = "timing"
 system.mem_ranges = [AddrRange("8192MB")]
 
 class L1ICache(Cache):
-    assoc = 2                 # Lower associativity, since instruction access is more predictable
+    assoc = 2
     tag_latency = 1
     data_latency = 1
     response_latency = 1
-    mshrs = 2                 # Fewer Miss Status Holding Registers (MSHRs) as instruction fetches are usually more linear
-    size = '32kB'             # Slightly larger size, depending on the workload
+    mshrs = 2
+    size = '32kB'
     tgts_per_mshr = 8
 
 class L1DCache(Cache):
-    assoc = 4                 # Higher associativity to handle more random data access patterns
-    tag_latency = 1           # Reduced tag latancy to minimize delays
-    data_latency = 1          # Reduce data latency to simulate forwarding
+    assoc = 4
+    tag_latency = 1
+    data_latency = 1
     response_latency = 1
-    mshrs = 4                 # More MSHRs to handle data misses efficiently
-    size = '16kB'             # Slightly smaller size compared to L1I
+    mshrs = 4
+    size = '16kB'
     tgts_per_mshr = 16
-    writeback_clean = True    # Write-back policy to reduce memory writes
+    writeback_clean = True
 
 class L2Cache(Cache):
-    assoc = 8                 # Higher associativity for shared access
-    tag_latency = 10          # Larger latency compared to L1 caches
-    data_latency = 10         
+    assoc = 8
+    tag_latency = 10
+    data_latency = 10
     response_latency = 10
-    mshrs = 8                 # Increased number of miss status holding registers
-    size = '256kB'            # Larger size than L1 caches
+    mshrs = 8
+    size = '256kB'
     tgts_per_mshr = 16
 
-# Set up the CPU
+# Set up the CPU with branch prediction
 system.cpu = RiscvTimingSimpleCPU()
-system.cpu.icache = L1ICache()  # Assign the L1 Instruction cache
-system.cpu.dcache = L1DCache()  # Assign the L1 Data cache
+system.cpu.branchPred = TournamentBP()  # Add branch prediction
+
+# Assign L1 instruction and data caches
+system.cpu.icache = L1ICache()
+system.cpu.dcache = L1DCache()
 
 # Set up the L2 cache and its bus
 system.l2cache = L2Cache()
-system.l2bus   = SystemXBar()
+system.l2bus = SystemXBar()
 
 # Create a memory bus
 system.membus = SystemXBar()
 
-# Connect the CPU caches to the memory bus
-system.cpu.icache_port = system.cpu.icache.cpu_side
-system.cpu.dcache_port = system.cpu.dcache.cpu_side
-
-# Connect the L1 caches to the L2 cache
+# Connect L1 caches to L2 cache
 system.cpu.icache.mem_side = system.l2bus.cpu_side_ports
 system.cpu.dcache.mem_side = system.l2bus.cpu_side_ports
 
-# Connect the L2 cache to the memory bus
+# Connect L2 cache to the memory bus
 system.l2cache.cpu_side = system.l2bus.mem_side_ports
 system.l2cache.mem_side = system.membus.cpu_side_ports
 
