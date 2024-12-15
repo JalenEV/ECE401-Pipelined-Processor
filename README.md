@@ -34,3 +34,8 @@ https://www.gem5.org/documentation/general_docs/building
 - [ ] # Add L2 Cache
 - [ ] # Pipeline Bypass/Forwarding
 - [ ] # Memory Tuning
+
+## Performance identify
+
+Performance output can be identify using output-filter.py
+ - python output-filter.py stats.txt
