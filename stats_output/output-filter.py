@@ -10,7 +10,9 @@ def extract_metrics(file_path):
         "avg_memory_latency": None,
         "branch_lookups": None,
         "branch_mispredictions": None,
-        "branch_accuracy": None
+        "branch_accuracy": None,
+        "instructions_executed": None,
+        "cpi": None
     }
 
     with open(file_path, 'r') as file:
@@ -35,6 +37,15 @@ def extract_metrics(file_path):
         if execution_ticks:
             metrics["execution_ticks"] = int(execution_ticks.group(1))
 
+        # Instructions executed
+        instructions_executed = re.search(r'system\.cpu\.commitStats0\.numInsts\s+(\d+)', content)
+        if instructions_executed:
+            metrics["instructions_executed"] = int(instructions_executed.group(1))
+
+        # Calculate CPI
+        if metrics["execution_ticks"] and metrics["instructions_executed"]:
+            metrics["cpi"] = metrics["execution_ticks"] / metrics["instructions_executed"]
+
         # Average memory latency
         memory_latency = re.search(r'system\.cpu\.dcache\.overallAvgMissLatency::total\s+(\d+)', content)
         if memory_latency:
@@ -45,7 +56,7 @@ def extract_metrics(file_path):
         if branch_lookups:
             metrics["branch_lookups"] = int(branch_lookups.group(1))
 
-        branch_mispredictions = re.search(r'system\.cpu\.branchPred\.mispredictions\s+(\d+)', content)
+        branch_mispredictions = re.search(r'system\.cpu\.branchPred\.condIncorrect\s+(\d+)', content)
         if branch_mispredictions:
             metrics["branch_mispredictions"] = int(branch_mispredictions.group(1))
 
@@ -69,6 +80,8 @@ if __name__ == "__main__":
     print(f"L2 Cache Hit Rate: {metrics['l2_hit_rate']:.2%}") if metrics['l2_hit_rate'] else print("L2 Cache Hit Rate: Data not found")
     print(f"DRAM Accesses: {metrics['dram_accesses']}") if metrics['dram_accesses'] else print("DRAM Accesses: Data not found")
     print(f"Execution Ticks: {metrics['execution_ticks']}") if metrics['execution_ticks'] else print("Execution Ticks: Data not found")
+    print(f"Instructions Executed: {metrics['instructions_executed']}") if metrics['instructions_executed'] else print("Instructions Executed: Data not found")
+    print(f"CPI: {metrics['cpi']:.2f}") if metrics['cpi'] else print("CPI: Data not found")
     print(f"Average Memory Latency: {metrics['avg_memory_latency']} ticks") if metrics['avg_memory_latency'] else print("Average Memory Latency: Data not found")
     print(f"Branch Prediction Lookups: {metrics['branch_lookups']}") if metrics['branch_lookups'] else print("Branch Prediction Lookups: Data not found")
     print(f"Branch Mispredictions: {metrics['branch_mispredictions']}") if metrics['branch_mispredictions'] else print("Branch Mispredictions: Data not found")
