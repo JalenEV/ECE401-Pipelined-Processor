@@ -4,5 +4,3 @@
 
 - [x] # Branch Prediction
 - [x] # Add L2 Cache
-- [ ] # Pipeline Bypass/Forwarding
-- [ ] # Memory Tuning

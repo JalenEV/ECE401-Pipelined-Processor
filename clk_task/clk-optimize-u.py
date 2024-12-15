@@ -7,21 +7,22 @@ system = System()
 
 # Set up the clock domain
 system.clk_domain = SrcClockDomain()
-system.clk_domain.clock = "1GHz"
+system.clk_domain.clock = "3GHz"
 system.clk_domain.voltage_domain = VoltageDomain()
 
 # Set the memory mode and address range
 system.mem_mode = "timing"
 system.mem_ranges = [AddrRange("8192MB")]
 
+# Define L1 Instruction and Data Caches
 class L1ICache(Cache):
     assoc = 2
     tag_latency = 1
     data_latency = 1
     response_latency = 1
-    mshrs = 2
-    size = '32kB'
-    tgts_per_mshr = 8
+    mshrs = 4
+    size = '16kB'
+    tgts_per_mshr = 20
 
 class L1DCache(Cache):
     assoc = 4
@@ -31,15 +32,11 @@ class L1DCache(Cache):
     mshrs = 4
     size = '16kB'
     tgts_per_mshr = 16
-    writeback_clean = True
 
-# Set up the CPU with branch prediction
+# Set up the CPU
 system.cpu = RiscvTimingSimpleCPU()
-system.cpu.branchPred = TournamentBP()  # Add branch prediction
-
-# Assign L1 instruction and data caches
-system.cpu.icache = L1ICache()
-system.cpu.dcache = L1DCache()
+system.cpu.icache = L1ICache()  # Assign the L1 Instruction cache
+system.cpu.dcache = L1DCache()  # Assign the L1 Data cache
 
 # Create a memory bus
 system.membus = SystemXBar()
