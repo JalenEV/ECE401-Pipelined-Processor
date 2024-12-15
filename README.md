@@ -38,4 +38,4 @@ https://www.gem5.org/documentation/general_docs/building
 ## Performance identify
 
 Performance output can be identify using output-filter.py
- - python output-filter.py <path-to-output-file>
+ - python output-filter.py stats.txt
