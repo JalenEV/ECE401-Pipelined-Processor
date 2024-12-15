@@ -25,22 +25,13 @@ class L1ICache(Cache):
 
 class L1DCache(Cache):
     assoc = 4
-    tag_latency = 1
-    data_latency = 1
+    tag_latency = 2
+    data_latency = 2
     response_latency = 1
     mshrs = 4
     size = '16kB'
     tgts_per_mshr = 16
     writeback_clean = True
-
-class L2Cache(Cache):
-    assoc = 8
-    tag_latency = 10
-    data_latency = 10
-    response_latency = 10
-    mshrs = 8
-    size = '256kB'
-    tgts_per_mshr = 16
 
 # Set up the CPU with branch prediction
 system.cpu = RiscvTimingSimpleCPU()
@@ -50,20 +41,16 @@ system.cpu.branchPred = TournamentBP()  # Add branch prediction
 system.cpu.icache = L1ICache()
 system.cpu.dcache = L1DCache()
 
-# Set up the L2 cache and its bus
-system.l2cache = L2Cache()
-system.l2bus = SystemXBar()
-
 # Create a memory bus
 system.membus = SystemXBar()
 
-# Connect L1 caches to L2 cache
-system.cpu.icache.mem_side = system.l2bus.cpu_side_ports
-system.cpu.dcache.mem_side = system.l2bus.cpu_side_ports
+# Connect the CPU caches to the memory bus
+system.cpu.icache_port = system.cpu.icache.cpu_side
+system.cpu.dcache_port = system.cpu.dcache.cpu_side
 
-# Connect L2 cache to the memory bus
-system.l2cache.cpu_side = system.l2bus.mem_side_ports
-system.l2cache.mem_side = system.membus.cpu_side_ports
+# Connect caches to the memory bus
+system.cpu.icache.mem_side = system.membus.cpu_side_ports
+system.cpu.dcache.mem_side = system.membus.cpu_side_ports
 
 # Create the interrupt controller for the CPU
 system.cpu.createInterruptController()
