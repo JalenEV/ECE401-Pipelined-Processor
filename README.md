@@ -35,6 +35,7 @@ https://www.gem5.org/documentation/general_docs/building
 - [ ] # Pipeline Bypass/Forwarding
 - [ ] # Memory Tuning
 
-## Optimization Task Lists
+## Performance identify
 
 Performance output can be identify using output-filter.py
+ - python output-filter.py <path-to-output-file>
