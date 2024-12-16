@@ -22,6 +22,7 @@ git clone https://github.com/JalenEV/ECE401-Pipelined-Processor.git
 # Necessary set up for gem5
 https://www.gem5.org/documentation/general_docs/building
 
+[!NOTE]
 # Navigate to the project directory
 cd gem5
 
@@ -39,8 +40,9 @@ cd m5out
 
 ## Performance identify
 
+[!TIP]
 Performance output can be identify using output-filter.py
- - python output-filter.py stats.txt
+ - python output-filter.py stats-<name>.txt
 
  ## Reference
 
