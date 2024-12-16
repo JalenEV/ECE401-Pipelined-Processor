@@ -19,12 +19,13 @@ This project involves designing a pipelined processor that implements the RISC-V
 # Clone the repository
 git clone https://github.com/JalenEV/ECE401-Pipelined-Processor.git
 
+
 # Necessary set up for gem5
 https://www.gem5.org/documentation/general_docs/building
 
->[!NOTE]
-># Navigate to the project directory
->cd gem5
+
+# Navigate to the project directory
+cd gem5
 
 # stats output 
 cd m5out
