@@ -3,6 +3,7 @@ import sys
 
 def extract_metrics(file_path):
     metrics = {
+        "sim_seconds": None,
         "l1_hit_rate": None,
         "l2_hit_rate": None,
         "dram_accesses": None,
@@ -27,6 +28,11 @@ def extract_metrics(file_path):
         metrics["l1_hit_rate"] = l1_hits / l1_accesses if l1_accesses else None
         metrics["l2_hit_rate"] = l2_hits / l2_accesses if l2_accesses else None
 
+        # Simulated seconds
+        sim_seconds = re.search(r'simSeconds\s+([\d\.e\-]+)', content)
+        if sim_seconds:
+            metrics["sim_seconds"] = float(sim_seconds.group(1))
+        
         # DRAM accesses
         dram_accesses = re.search(r'system\.mem_ctrl\.dram\.numReads::total\s+(\d+)', content)
         if dram_accesses:
@@ -75,8 +81,8 @@ if __name__ == "__main__":
     file_path = sys.argv[1]
     metrics = extract_metrics(file_path)
 
-    print(file_path)
     print("Extracted Metrics:")
+    print(f"Simulated Time (Seconds): {metrics['sim_seconds']}") if metrics['sim_seconds'] else print("Simulated Time: Data not found")
     print(f"L1 Cache Hit Rate: {metrics['l1_hit_rate']:.2%}") if metrics['l1_hit_rate'] else print("L1 Cache Hit Rate: Data not found")
     print(f"L2 Cache Hit Rate: {metrics['l2_hit_rate']:.2%}") if metrics['l2_hit_rate'] else print("L2 Cache Hit Rate: Data not found")
     print(f"DRAM Accesses: {metrics['dram_accesses']}") if metrics['dram_accesses'] else print("DRAM Accesses: Data not found")

@@ -1,8 +1,10 @@
 import re
+import sys
 
 def extract_and_filter_metrics(content):
     # Define metrics and their regex patterns
     metrics_patterns = {
+        "Simulated Time (Seconds)": r"simSeconds\s+([\d\.e\-]+)",
         "L1 Cache Hit Rate": r"system\.cpu\.icache\.overallHits::total\s+(\d+)",
         "L2 Cache Hit Rate": r"system\.cpu\.dcache\.overallHits::total\s+(\d+)",
         "DRAM Accesses": r"system\.mem_ctrl\.dram\.numReads::total\s+(\d+)",
@@ -46,7 +48,7 @@ def extract_and_filter_metrics(content):
     return metrics
 
 # Example usage with the provided input data
-with open('stats.txt', 'r') as file:  # Replace with your actual file
+with open(sys.argv[1], 'r') as file:  # Replace with your actual file
     content = file.read()
 
 results = extract_and_filter_metrics(content)
