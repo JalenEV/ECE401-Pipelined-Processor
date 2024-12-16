@@ -75,6 +75,7 @@ if __name__ == "__main__":
     file_path = sys.argv[1]
     metrics = extract_metrics(file_path)
 
+    print(file_path)
     print("Extracted Metrics:")
     print(f"L1 Cache Hit Rate: {metrics['l1_hit_rate']:.2%}") if metrics['l1_hit_rate'] else print("L1 Cache Hit Rate: Data not found")
     print(f"L2 Cache Hit Rate: {metrics['l2_hit_rate']:.2%}") if metrics['l2_hit_rate'] else print("L2 Cache Hit Rate: Data not found")
