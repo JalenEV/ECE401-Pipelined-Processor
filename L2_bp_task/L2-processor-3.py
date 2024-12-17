@@ -25,8 +25,8 @@ class L1ICache(Cache):
 
 class L1DCache(Cache):
     assoc = 4                 # Higher associativity to handle more random data access patterns
-    tag_latency = 2           # Reduced tag latency to minimize delays
-    data_latency = 2          # Reduce data latency to simulate forwarding
+    tag_latency = 1           # Reduced tag latency to minimize delays
+    data_latency = 1          # Reduce data latency to simulate forwarding
     response_latency = 1
     mshrs = 4                 # More MSHRs to handle data misses efficiently
     size = '16kB'             # Slightly smaller size compared to L1I

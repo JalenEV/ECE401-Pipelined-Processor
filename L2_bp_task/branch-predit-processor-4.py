@@ -20,18 +20,18 @@ class L1ICache(Cache):
     data_latency = 1
     response_latency = 1
     mshrs = 2
-    size = '32kB'
+    size = '32kB'             # Slightly larger size, depending on the workload
     tgts_per_mshr = 8
 
 class L1DCache(Cache):
     assoc = 4
-    tag_latency = 2
-    data_latency = 2
+    tag_latency = 1           # Reduced tag latancy to minimize delays
+    data_latency = 1          # Reduce data latency to simulate forwarding
     response_latency = 1
     mshrs = 4
     size = '16kB'
     tgts_per_mshr = 16
-    writeback_clean = True
+    writeback_clean = True    # Write-back policy to reduce memory writes
 
 # Set up the CPU with branch prediction
 system.cpu = RiscvTimingSimpleCPU()
