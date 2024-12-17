@@ -21,7 +21,7 @@ class L1ICache(Cache):
     data_latency = 1
     response_latency = 1
     mshrs = 4
-    size = '32kB'
+    size = '16kB'
     tgts_per_mshr = 8
 
 class L1DCache(Cache):
