@@ -7,7 +7,7 @@ system = System()
 
 # Set up the clock domain with 3GHz clock
 system.clk_domain = SrcClockDomain()
-system.clk_domain.clock = "3GHz"  # Optimized clock speed
+system.clk_domain.clock = "3GHz"  # Optimized clock speed to 3GHz
 system.clk_domain.voltage_domain = VoltageDomain()
 
 # Set the memory mode and address range
@@ -21,7 +21,7 @@ class L1ICache(Cache):
     data_latency = 1
     response_latency = 1
     mshrs = 4
-    size = '32kB'  # Larger size to reduce instruction cache misses
+    size = '32kB'             # Slightly larger size, depending on the workload
     tgts_per_mshr = 8
 
 class L1DCache(Cache):
@@ -30,18 +30,18 @@ class L1DCache(Cache):
     data_latency = 2
     response_latency = 1
     mshrs = 4
-    size = '16kB'
+    size = '16kB'             # Slightly smaller size compared to L1I
     tgts_per_mshr = 16
-    writeback_clean = True  # Use write-back policy to reduce memory writes
+    writeback_clean = True    # Write-back policy to reduce memory writes
 
 # Define the L2 Cache
 class L2Cache(Cache):
-    assoc = 8
-    tag_latency = 10
-    data_latency = 10
+    assoc = 8                 # Higher associativity for shared access       
+    tag_latency = 10          # Larger latency compared to L1 caches
+    data_latency = 10         
     response_latency = 10
-    mshrs = 8
-    size = '256kB'
+    mshrs = 8                 # Increase number of miss status holding registers
+    size = '256kB'            # Larger size than L1 caches
     tgts_per_mshr = 16
 
 # Set up the CPU with branch prediction
