@@ -22,7 +22,7 @@ class L1ICache(Cache):
     response_latency = 1
     mshrs = 4
     size = '32kB'
-    tgts_per_mshr = 20
+    tgts_per_mshr = 8
 
 class L1DCache(Cache):
     assoc = 4
