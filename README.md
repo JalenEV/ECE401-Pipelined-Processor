@@ -19,10 +19,8 @@ This project involves designing a pipelined processor that implements the RISC-V
 # Clone the repository
 git clone https://github.com/JalenEV/ECE401-Pipelined-Processor.git
 
-
 # Necessary set up for gem5
 https://www.gem5.org/documentation/general_docs/building
-
 
 # Navigate to the project directory
 cd gem5
@@ -42,6 +40,9 @@ cd m5out
 ## Performance identify
 
 >[!TIP]
+> Compile and running the pre-set processor path
+> - build/RISCV/gem5.opt configs/learning_gem5/part1/<name.py>
+>
 >Performance output can be identify using output-filter.py
 > - python output-filter.py stats-<name>.txt
 
